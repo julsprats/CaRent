@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct CarDetailView: View {
@@ -9,13 +8,13 @@ struct CarDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             if let url = URL(string: vehicle.imageUrl), UIApplication.shared.canOpenURL(url) {
                 RemoteImageView(urlString: vehicle.imageUrl)
-                    .frame(width: 300, height: 200)
+                    .frame(height: 200)
                     .cornerRadius(10)
             } else {
                 Image(vehicle.imageUrl)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 300, height: 200)
+                    .frame(height: 200)
                     .cornerRadius(10)
             }
             
@@ -26,10 +25,11 @@ struct CarDetailView: View {
                     .padding(.bottom, 5)
                 
                 HStack {
-                    SpecificationView(title: "Fuel Injection", value: "Yes")
+                    SpecificationView(title: "Fuel", value: vehicle.fuel)
                     SpecificationView(title: "Cool Seat", value: vehicle.coolSeat ? "Yes" : "No")
                     SpecificationView(title: "Acceleration", value: vehicle.acceleration)
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
             }
             
             // Car details section

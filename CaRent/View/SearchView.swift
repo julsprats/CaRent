@@ -7,7 +7,7 @@ struct SearchView: View {
     @State private var selectedCarType: String = "All"
     @State private var selectedTransmissionType: String = "All"
     @State private var selectedFuelType: String = "All"
-    @State private var selectedPriceRange: ClosedRange<Double> = 0...100000
+    @State private var selectedPriceRange: ClosedRange<Double> = 0...10000000
     @State private var selectedDoors: Int = 0
     @State private var selectedBrand: String = "All"
     @State private var errorMessage: String?
@@ -15,12 +15,12 @@ struct SearchView: View {
     @State private var showFilterView: Bool = false
     let user: User
     
-    let trendingBrands = ["Mercedes", "BMW", "Porsche", "Maserati", "Renault"]
+    let trendingBrands = ["Mercedes", "BMW", "Porsche", "Maserati", "Ferrari"]
     let subscriptionTiers = ["All", "Silver", "Gold", "Platinum"]
     let carTypes = ["All", "SUV", "Sedan", "Coupe"]
     let transmissionTypes = ["All", "Automatic", "Manual"]
     let fuelTypes = ["All", "Petrol", "Diesel", "Electric", "Hybrid"]
-    let brands = ["All", "Mercedes", "BMW", "Porsche", "Maserati", "Renault"]
+    let brands = ["All", "Mercedes", "BMW", "Porsche", "Maserati", "Ferrari"]
     let doors = [0, 2, 4, 5]
     
     var filteredVehicles: [Vehicle] {
@@ -57,7 +57,7 @@ struct SearchView: View {
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.blue)
+                        .background(Color(red: 208/255, green: 152/255, blue: 0/255))
                         .cornerRadius(10)
                         .padding(.horizontal)
                 }
@@ -71,21 +71,30 @@ struct SearchView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 15) {
                         ForEach(trendingBrands, id: \.self) { brand in
-                            VStack {
-                                Image(brand) // Assumes images are named "Mercedes.png", "BMW.png", etc.
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 80, height: 80)
-                                    .background(Color.gray.opacity(0.2))
-                                    .clipShape(Circle())
-                                
-                                Text(brand)
-                                    .font(.headline)
-                                    .padding(.top, 5)
+                            Button(action: {
+                                if selectedBrand == brand {
+                                    selectedBrand = "All"
+                                } else {
+                                    selectedBrand = brand
+                                }
+                            }) {
+                                VStack {
+                                    Image(brand) // Assumes images are named "Mercedes.png", "BMW.png", etc.
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 80, height: 80)
+                                        .background(Color.gray.opacity(0.2))
+                                        .clipShape(Circle())
+                                    
+                                    Text(brand)
+                                        .font(.headline)
+                                        .padding(.top, 5)
+                                        .foregroundColor(.black)
+                                }
+                                .padding()
+                                .background(selectedBrand == brand ? Color(red: 208/255, green: 152/255, blue: 0/255) : Color.gray.opacity(0.2))
+                                .cornerRadius(10)
                             }
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
                         }
                     }
                     .padding(.horizontal)
@@ -197,4 +206,3 @@ struct SearchView_Previews: PreviewProvider {
         )
     }
 }
-
