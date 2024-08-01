@@ -6,51 +6,80 @@ struct BillView: View {
     let price: Double
 
     @State private var showAlert = false
+    @State private var navigateToHome = false
+    @State private var selectedPaymentMethod: PaymentMethod = .card
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("Bill")
-                .font(.title)
-                .bold()
-            
-            Text("Booking ID: XYZ123") // Placeholder for booking ID
-            
-            if let url = URL(string: vehicle.imageUrl), UIApplication.shared.canOpenURL(url) {
-                RemoteImageView(urlString: vehicle.imageUrl)
-                    .frame(height: 200)
-                    .cornerRadius(10)
-            } else {
-                Image(vehicle.imageUrl)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 200)
-                    .cornerRadius(10)
-            }
-            
-            Text("Vehicle: \(vehicle.name)")
-            Text("Date of Pickup: June 20, 2024") // Placeholder for date of pickup
-            Text("Pickup Location: Your location") // Placeholder for pickup location
-            Text("Pricing Option: \(selectedOption.rawValue)")
-            Text("Price: $\(String(format: "%.2f", price))")
+        NavigationView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Checkout")
+                    .font(.title)
+                    .bold()
+                
+                Text("Booking ID: XYZ123") // Placeholder for booking ID
+                
+                if let url = URL(string: vehicle.imageUrl), UIApplication.shared.canOpenURL(url) {
+                    RemoteImageView(urlString: vehicle.imageUrl)
+                        .frame(height: 200)
+                        .cornerRadius(10)
+                } else {
+                    Image(vehicle.imageUrl)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 200)
+                        .cornerRadius(10)
+                }
+                
+                Text("Vehicle: \(vehicle.name)")
+                Text("Date of Pickup: June 20, 2024") // Placeholder for date of pickup
+                Text("Pickup Location: Your location") // Placeholder for pickup location
+                Text("Pricing Option: \(selectedOption.rawValue)")
+                Text("Price: $\(String(format: "%.2f", price))")
 
-            Spacer()
-            
-            Button(action: {
-                confirmBooking()
-            }) {
-                Text("Confirm Payment")
+                // Payment Method Picker
+                Text("Select Payment Method:")
                     .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(red: 208/255, green: 152/255, blue: 0/255)) // Gold
-                    .cornerRadius(10)
+                Picker("Payment Method", selection: $selectedPaymentMethod) {
+                    ForEach(PaymentMethod.allCases) { method in
+                        Text(method.rawValue).tag(method)
+                            .font(.headline)
+                    }
+                }
+                .pickerStyle(.inline)
+                .padding(0)
+
+                Spacer()
+                
+                Button(action: {
+                    confirmBooking()
+                }) {
+                    Text("Confirm Payment")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color(red: 208/255, green: 152/255, blue: 0/255)) // Gold
+                        .cornerRadius(10)
+                }
             }
-        }
-        .padding()
-        .navigationBarTitle("Bill", displayMode: .inline)
-        .alert(isPresented: $showAlert) {
-            Alert(title: Text("Booking Confirmed"), message: Text("Your booking has been confirmed and the vehicle is now unavailable."), dismissButton: .default(Text("OK")))
+            .padding()
+            .navigationBarTitle("Checkout", displayMode: .inline)
+            .background(
+                NavigationLink(
+                    destination: HomeView(),
+                    isActive: $navigateToHome,
+                    label: { EmptyView() }
+                )
+            )
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Booking Confirmed"),
+                    message: Text("Your booking has been confirmed and the vehicle is now unavailable."),
+                    dismissButton: .default(Text("Go to Home Screen")) {
+                        navigateToHome = true
+                    }
+                )
+            }
         }
     }
 
@@ -147,3 +176,13 @@ struct BillView_Previews: PreviewProvider {
     }
 }
 
+
+
+enum PaymentMethod: String, CaseIterable, Identifiable {
+    case card = "Credit/Debit Card"
+    case paypal = "PayPal"
+    case applePay = "Apple Pay"
+    case giftCard = "Gift Card"
+
+    var id: String { self.rawValue }
+}
