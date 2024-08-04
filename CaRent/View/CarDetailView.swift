@@ -1,8 +1,13 @@
 import SwiftUI
+import CoreLocation
 
 struct CarDetailView: View {
     let vehicle: Vehicle
     let user: User
+    @StateObject private var locationManager = LocationManager()
+    @State private var showPaymentPage = false
+    @State private var userLocation: CLLocationCoordinate2D?
+    @State private var showAlert = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -48,7 +53,14 @@ struct CarDetailView: View {
             
             Spacer()
             
-            NavigationLink(destination: PaymentPage(vehicle: vehicle, user: user)) {
+            Button(action: {
+                if let location = locationManager.userLocation {
+                    userLocation = location
+                    showPaymentPage = true
+                } else if locationManager.locationError != nil {
+                    showAlert = true
+                }
+            }) {
                 Text("Book Now")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -57,6 +69,18 @@ struct CarDetailView: View {
                     .background(Color(red: 208/255, green: 152/255, blue: 0/255)) // Gold
                     .cornerRadius(10)
             }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Location Error"),
+                    message: Text(locationManager.locationError ?? "Unknown error"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+            .background(
+                NavigationLink(destination: PaymentPage(vehicle: vehicle, user: user, userLocation: userLocation), isActive: $showPaymentPage) {
+                    EmptyView()
+                }
+            )
         }
         .padding()
         .navigationBarTitle(Text(vehicle.name), displayMode: .inline)
