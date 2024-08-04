@@ -1,11 +1,14 @@
 import SwiftUI
+import CoreLocation
 
 struct PaymentPage: View {
     let vehicle: Vehicle
     let user: User
+    let userLocation: CLLocationCoordinate2D?
 
     @State private var isEligible: Bool = true
     @State private var errorMessage: String?
+    @State private var locationDescription: String = "Your location"
 
     var body: some View {
         NavigationView {
@@ -28,8 +31,8 @@ struct PaymentPage: View {
                     Text("Car Type: \(vehicle.carType)")
                     Text("Transmission: \(vehicle.transmissionType)")
                     Text("Fuel: \(vehicle.fuel)")
-                    Text("Date of Pickup: June 20, 2024") // Placeholder for date of pickup
-                    Text("Pickup Location: Your location") // Placeholder for pickup location
+                    Text("Date of Pickup: August 8, 2024")
+                    Text("Pickup Location: \(locationDescription)")
                 }
                 .padding()
 
@@ -43,7 +46,7 @@ struct PaymentPage: View {
 
                 // Proceed to Payment Button
                 if isEligible {
-                    NavigationLink(destination: ReceiptView(vehicle: vehicle)) {
+                    NavigationLink(destination: ReceiptView(vehicle: vehicle, userLocation: locationDescription)) {
                         Text("Proceed to Payment")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -62,6 +65,9 @@ struct PaymentPage: View {
         }
         .onAppear {
             checkEligibility()
+            if let location = userLocation {
+                getAddressFromCoordinates(location: location)
+            }
         }
     }
 
@@ -79,6 +85,23 @@ struct PaymentPage: View {
 
         if !isEligible {
             errorMessage = "Your subscription tier does not allow booking this vehicle."
+        }
+    }
+
+    private func getAddressFromCoordinates(location: CLLocationCoordinate2D) {
+        let geocoder = CLGeocoder()
+        let clLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        geocoder.reverseGeocodeLocation(clLocation) { placemarks, error in
+            if let error = error {
+                print("Failed to find user's location: \(error.localizedDescription)")
+                return
+            }
+
+            if let placemark = placemarks?.first {
+                let city = placemark.locality ?? ""
+                let country = placemark.country ?? ""
+                locationDescription = "\(city), \(country)"
+            }
         }
     }
 }
@@ -108,7 +131,8 @@ struct PaymentPage_Previews: PreviewProvider {
                 email: "johndoe@example.com",
                 subscriptionTier: "Gold",
                 currentVehicleId: ""
-            )
+            ),
+            userLocation: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194) // Example coordinates for preview
         )
     }
 }
