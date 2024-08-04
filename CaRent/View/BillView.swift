@@ -4,6 +4,7 @@ struct BillView: View {
     let vehicle: Vehicle
     let selectedOption: ReceiptView.PricingOption
     let price: Double
+    let userLocation: String
 
     @State private var showAlert = false
     @State private var navigateToHome = false
@@ -31,8 +32,8 @@ struct BillView: View {
                 }
                 
                 Text("Vehicle: \(vehicle.name)")
-                Text("Date of Pickup: June 20, 2024") // Placeholder for date of pickup
-                Text("Pickup Location: Your location") // Placeholder for pickup location
+                Text("Date of Pickup: August 8, 2024") // Placeholder for date of pickup
+                Text("Pickup Location: \(userLocation)") // Display passed location
                 Text("Pricing Option: \(selectedOption.rawValue)")
                 Text("Price: $\(String(format: "%.2f", price))")
 
@@ -171,7 +172,8 @@ struct BillView_Previews: PreviewProvider {
                 price: 79999.99
             ),
             selectedOption: .monthly,
-            price: 2000.0
+            price: 2000.0,
+            userLocation: "San Francisco, USA"
         )
     }
 }
