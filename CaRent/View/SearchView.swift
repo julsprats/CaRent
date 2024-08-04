@@ -39,7 +39,7 @@ struct SearchView: View {
 
     var body: some View {
         ZStack {
-            Color.white.edgesIgnoringSafeArea(.all) // White background for the whole screen
+            Color.clear.edgesIgnoringSafeArea(.all) // Background color set to black
 
             VStack(alignment: .leading) {
                 // Search bar
@@ -47,7 +47,7 @@ struct SearchView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
                     .padding(.top, 10)
-                
+
                 // Filter button
                 Button(action: {
                     showFilterView.toggle()
@@ -67,6 +67,7 @@ struct SearchView: View {
                     .font(.title2)
                     .padding(.horizontal)
                     .padding(.top, 10)
+                    .foregroundColor(Color("PrimaryTextColor"))
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 15) {
@@ -89,10 +90,10 @@ struct SearchView: View {
                                     Text(brand)
                                         .font(.headline)
                                         .padding(.top, 5)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("PrimaryTextColor"))
                                 }
                                 .padding()
-                                .background(selectedBrand == brand ? Color(red: 208/255, green: 152/255, blue: 0/255) : Color.gray.opacity(0.2))
+                                .background(selectedBrand == brand ? Color(red: 208/255, green: 152/255, blue: 0/255) : Color("Grays"))
                                 .cornerRadius(10)
                             }
                         }
@@ -105,6 +106,7 @@ struct SearchView: View {
                     .font(.title2)
                     .padding(.horizontal)
                     .padding(.top, 10)
+                    .foregroundColor(Color("PrimaryTextColor"))
                 
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
@@ -133,8 +135,10 @@ struct SearchView: View {
                                             VStack(alignment: .leading, spacing: 5) {
                                                 Text(vehicle.name)
                                                     .font(.headline)
+                                                    .foregroundColor(Color("PrimaryTextColor"))
                                                 Text(vehicle.description)
                                                     .font(.subheadline)
+                                                    .foregroundColor(Color.gray)
                                             }
                                             Spacer()
                                             Text(unavailableVehicles.contains(vehicle.id) ? "Unavailable" : "Available")
@@ -143,7 +147,7 @@ struct SearchView: View {
                                         }
                                     }
                                     .padding()
-                                    .background(Color.white)
+                                    .background(Color("Grays"))
                                     .cornerRadius(10)
                                     .shadow(radius: 5)
                                 }
@@ -204,5 +208,7 @@ struct SearchView_Previews: PreviewProvider {
                 currentVehicleId: ""
             )
         )
+        .environment(\.colorScheme, .light) // Preview in light mode
+        .environment(\.colorScheme, .dark) // Preview in dark mode
     }
 }
