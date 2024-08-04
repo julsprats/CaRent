@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ReceiptView: View {
     let vehicle: Vehicle
+    let userLocation: String
+
     @State private var selectedOption: PricingOption?
     @State private var showConfirmation: Bool = false
     @State private var showBill: Bool = false
@@ -42,8 +44,8 @@ struct ReceiptView: View {
             }
 
             Text("Vehicle: \(vehicle.name)")
-            Text("Date of Pickup: June 20, 2024") // Placeholder for date of pickup
-            Text("Pickup Location: Your location") // Placeholder for pickup location
+            Text("Date of Pickup: August 8, 2024") // Placeholder for date of pickup
+            Text("Pickup Location: \(userLocation)") // Display passed location
 
             Text("Select a pricing option:")
                 .font(.headline)
@@ -69,7 +71,7 @@ struct ReceiptView: View {
                         .cornerRadius(10)
                 }
                 .sheet(isPresented: $showBill) {
-                    BillView(vehicle: vehicle, selectedOption: selectedOption, price: pricing[selectedOption]!)
+                    BillView(vehicle: vehicle, selectedOption: selectedOption, price: pricing[selectedOption]!, userLocation: userLocation)
                 }
             }
         }
@@ -104,22 +106,24 @@ struct PricingOptionButton: View {
 
 struct ReceiptView_Previews: PreviewProvider {
     static var previews: some View {
-        ReceiptView(vehicle: Vehicle(
-            id: "1",
-            name: "Tesla Model S",
-            description: "A premium electric sedan",
-            imageUrl: "tesla_model_S", // Update to match asset name for local testing
-            subscriptionTier: "Platinum",
-            carType: "Sedan",
-            transmissionType: "Automatic",
-            fuel: "Electric",
-            coolSeat: true,
-            acceleration: "3.1s",
-            seats: 5,
-            doors: 5,
-            brand: "Tesla",
-            price: 79999.99
-        ))
+        ReceiptView(
+            vehicle: Vehicle(
+                id: "1",
+                name: "Tesla Model S",
+                description: "A premium electric sedan",
+                imageUrl: "tesla_model_S", // Update to match asset name for local testing
+                subscriptionTier: "Platinum",
+                carType: "Sedan",
+                transmissionType: "Automatic",
+                fuel: "Electric",
+                coolSeat: true,
+                acceleration: "3.1s",
+                seats: 5,
+                doors: 5,
+                brand: "Tesla",
+                price: 79999.99
+            ),
+            userLocation: "San Francisco, USA" // Example location for preview
+        )
     }
 }
-
