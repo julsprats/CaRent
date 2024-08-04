@@ -59,10 +59,10 @@ struct HomeView: View {
                                         VStack(alignment: .leading, spacing: 5) {
                                             Text(vehicle.name)
                                                 .font(.headline)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(Color("PrimaryTextColor"))
                                             Text(vehicle.description)
                                                 .font(.subheadline)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(Color("PrimaryTextColor"))
                                             Text("Seats: \(vehicle.seats), Doors: \(vehicle.doors)")
                                                 .font(.caption)
                                                 .foregroundColor(.gray)
@@ -72,7 +72,7 @@ struct HomeView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .center)
                                     .padding()
-                                    .background(Color.white)
+                                    .background(Color("Grays"))
                                     .cornerRadius(10)
                                     .shadow(radius: 5)
                                 }
