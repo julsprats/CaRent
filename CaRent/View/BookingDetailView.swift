@@ -1,18 +1,24 @@
 import SwiftUI
+import MapKit
 
 struct BookingDetailView: View {
     var booking: Booking
+    var location: CLLocationCoordinate2D
     @EnvironmentObject var firebaseAuth: FirebaseAuthHelper
     @Binding var bookings: [Booking]
     @State private var showConfirmation = false
 
+    init(booking: Booking, bookings: Binding<[Booking]>, location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)) {
+        self.booking = booking
+        self._bookings = bookings
+        self.location = location
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-
             Text("Vehicle: \(booking.vehicleName)")
             Text("Description: \(booking.vehicleDescription)")
-            Text("Booking Date: \(booking.bookingDate, formatter: DateFormatter.shortDateTime)")
-
+            
             if let url = URL(string: booking.imageUrl), UIApplication.shared.canOpenURL(url) {
                 RemoteImageView(urlString: booking.imageUrl)
                     .frame(height: 200)
@@ -21,6 +27,16 @@ struct BookingDetailView: View {
                 Image(booking.imageUrl)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .frame(height: 200)
+                    .cornerRadius(10)
+            }
+            
+            Text("Booking Date: \(booking.bookingDate, formatter: DateFormatter.shortDateTime)")
+            
+            // Add the map view for the booking location
+            VStack {
+                Text("Booking Location")
+                MapView(coordinate: location)
                     .frame(height: 200)
                     .cornerRadius(10)
             }
@@ -107,10 +123,10 @@ struct BookingDetailView_Previews: PreviewProvider {
                 vehicleName: "Tesla Model S",
                 vehicleDescription: "A premium electric sedan",
                 bookingDate: Date(),
-                imageUrl: "tesla_model_S", // Update to match asset name for local testing
+                imageUrl: "tesla_model_s",
                 status: "Active"
             ),
-            bookings: .constant(LocalData.bookings)
+            bookings: .constant(LocalData.bookings), location: CLLocationCoordinate2D(latitude: 43.651070, longitude: -79.347015)
         ).environmentObject(FirebaseAuthHelper())
     }
 }
