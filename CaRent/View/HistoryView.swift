@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 
 struct HistoryView: View {
     @State private var bookings: [Booking] = []
@@ -18,9 +19,12 @@ struct HistoryView: View {
                     .foregroundColor(.gray)
                     .padding()
             } else {
-            
                 List(bookings) { booking in
-                    NavigationLink(destination: BookingDetailView(booking: booking, bookings: $bookings).environmentObject(FirebaseAuthHelper())) {
+                    NavigationLink(destination: BookingDetailView(
+                        booking: booking,
+                        bookings: $bookings,
+                        location: CLLocationCoordinate2D(latitude: 43.651070, longitude: -79.347015) // Default location
+                    ).environmentObject(FirebaseAuthHelper())) {
                         HStack {
                             if let url = URL(string: booking.imageUrl), UIApplication.shared.canOpenURL(url) {
                                 RemoteImageView(urlString: booking.imageUrl)
