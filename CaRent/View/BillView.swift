@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreLocation
 
 struct BillView: View {
     let vehicle: Vehicle
@@ -9,6 +10,7 @@ struct BillView: View {
     @State private var showAlert = false
     @State private var navigateToHome = false
     @State private var selectedPaymentMethod: PaymentMethod = .card
+    @State private var navigateToBookingDetail = false
 
     var body: some View {
         NavigationView {
@@ -67,8 +69,18 @@ struct BillView: View {
             .navigationBarTitle("Checkout", displayMode: .inline)
             .background(
                 NavigationLink(
-                    destination: HomeView(),
-                    isActive: $navigateToHome,
+                    destination: BookingDetailView(
+                        booking: Booking(
+                            id: UUID().uuidString,
+                            vehicleName: vehicle.name,
+                            vehicleDescription: vehicle.description,
+                            bookingDate: Date(), // Current date
+                            imageUrl: vehicle.imageUrl,
+                            status: "Confirmed"
+                        ),
+                        bookings: .constant(loadBookings()), location: getLocationCoordinate(from: userLocation)
+                    ),
+                    isActive: $navigateToBookingDetail,
                     label: { EmptyView() }
                 )
             )
@@ -77,11 +89,16 @@ struct BillView: View {
                     title: Text("Booking Confirmed"),
                     message: Text("Your booking has been confirmed and the vehicle is now unavailable."),
                     dismissButton: .default(Text("Go to Home Screen")) {
-                        navigateToHome = true
+                        navigateToBookingDetail = true
                     }
                 )
             }
         }
+    }
+
+    private func getLocationCoordinate(from location: String) -> CLLocationCoordinate2D {
+        // Mock implementation, replace with actual geocoding
+        return CLLocationCoordinate2D(latitude: 43.651070, longitude: -79.347015)
     }
 
     private func confirmBooking() {
@@ -173,7 +190,7 @@ struct BillView_Previews: PreviewProvider {
             ),
             selectedOption: .monthly,
             price: 2000.0,
-            userLocation: "San Francisco, USA"
+            userLocation: "Toronto, CA"
         )
     }
 }
@@ -188,3 +205,4 @@ enum PaymentMethod: String, CaseIterable, Identifiable {
 
     var id: String { self.rawValue }
 }
+
