@@ -1,4 +1,5 @@
 import SwiftUI
+import Speech
 
 struct SearchView: View {
     @State private var vehicles: [Vehicle] = []
@@ -13,6 +14,9 @@ struct SearchView: View {
     @State private var errorMessage: String?
     @State private var unavailableVehicles: [String] = []
     @State private var showFilterView: Bool = false
+    @ObservedObject private var speechRecognizer = SpeechRecognizer()
+    @State private var isListening: Bool = false
+    
     let user: User
     
     let trendingBrands = ["Mercedes", "BMW", "Porsche", "Maserati", "Ferrari"]
@@ -43,10 +47,43 @@ struct SearchView: View {
 
             VStack(alignment: .leading) {
                 // Search bar
-                TextField("Search a vehicle", text: $searchText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
-                    .padding(.top, 10)
+                HStack {
+                    TextField("Search a vehicle", text: $searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color(red: 208/255, green: 152/255, blue: 0/255), lineWidth: 2) // Gold border
+                        )
+                        .padding(.leading, 15)
+                        .onChange(of: speechRecognizer.recognizedText) { newValue in
+                            searchText = newValue
+                        }
+
+                    // Speech recognition button
+                    Button(action: {
+                        isListening.toggle()
+                        if isListening {
+                            speechRecognizer.startListening()
+                        } else {
+                            speechRecognizer.stopListening()
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: isListening ? "mic.fill" : "mic.slash.fill")
+                        }
+                        .padding(7)
+                        .foregroundColor(isListening ? Color.white : Color(red: 208/255, green: 152/255, blue: 0/255))
+                        .background(isListening ? Color(red: 208/255, green: 152/255, blue: 0/255) : Color.white)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color(red: 208/255, green: 152/255, blue: 0/255), lineWidth: 2) // Gold border
+                        )
+                        .padding(.trailing, 15)
+                    }
+                }
+                .padding(.horizontal, 0)
+                .padding(.top, 5)
 
                 // Filter button
                 Button(action: {
@@ -212,3 +249,4 @@ struct SearchView_Previews: PreviewProvider {
         .environment(\.colorScheme, .dark) // Preview in dark mode
     }
 }
+
